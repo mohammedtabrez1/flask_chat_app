@@ -8,9 +8,6 @@ import datetime
 client=MongoClient("mongodb+srv://Tabrez:Tabrez@cluster.s1d75.mongodb.net/<dbname>?retryWrites=true&w=majority")
 chat_db=client.get_database("AppDatabase")
 users_collection= chat_db.get_collection("Users")
-rooms_collection = chat_db.get_collection("rooms")
-room_members_collection = chat_db.get_collection("room_members")
-messages_collection = chat_db.get_collection("messages")
 
 def save_user(username,email,password):
     hashed_password=generate_password_hash(password)
@@ -19,7 +16,10 @@ def save_user(username,email,password):
 def get_user(username):
     data=users_collection.find_one({'_id':username})
     return User(data['_id'],data['email'],data['password']) if data else None
-
+'''
+rooms_collection = chat_db.get_collection("rooms")
+room_members_collection = chat_db.get_collection("room_members")
+messages_collection = chat_db.get_collection("messages")
 def save_room(room_name, created_by):
     room_id = rooms_collection.insert_one(
         {'name': room_name, 'created_by': created_by, 'created_at': datetime.now()}).inserted_id
@@ -83,3 +83,5 @@ def get_messages(room_id, page=0):
     for message in messages:
         message['created_at'] = message['created_at'].strftime("%d %b, %H:%M")
     return messages[::-1]
+    
+'''
