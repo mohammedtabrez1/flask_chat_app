@@ -1,57 +1,123 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-const request = new XMLHttpRequest();
+
 
 var socket=io.connect(location.protocol+'//'+document.domain+':'+location.port);
-    document.querySelector('#sendBtn').onsubmit =(e)=>{
+    socket.on('connect', async ()=>{
+    console.log('connected!!!!!')
+    document.querySelector('#msgForm').addEventListener('submit',async (e)=>{
+    console.log('clicked')
     e.preventDefault();
     msg=document.querySelector('#msg').value;
-    add_message(message=msg);
-    socket.on('connect',()=>
-    socket.emit('send_message',{name:load_name(),message:msg}))};
+    let name=await load_name();
+    add_messageonright(name,msg);
+    socket.emit('send_message',{name:name,msg:msg});
+    })});
 
 
 socket.on('receive',(data)=>{
-    name=data[name];
-    msg=data[msg];
-    add_message(name,msg)});
+    name=data.name;
+    msg=data.msg;
+    console.log('message received:'+ msg)
+    add_messageonleft(name,msg)});
 
 
-function load_name(){
-          request.open('GET', '/get_name');
-          request.onload = () => {
-              const data = JSON.parse(request.responseText);
-               console.log(data);
-          return data['name']}};
+
+async function load_name(){
+   return await fetch('/get_name').then(async (res)=> {return await res.json()})
+    .then((data)=>{
+    console.log(data.name)
+    return data.name}).catch((err)=> console.log(err))}
+
+async function get_messages(){
+   return await fetch('/get_messages').then(async (res)=> {return await res.json()})
+    .then((data)=>{
+    console.log(data.msgs)
+    return data.msgs
+    return data.name}).catch((err)=> console.log(err))}
 
 
-function add_message(name,message){{
-    var content = '<div class="container">' + '<b style="color:#000" class="right">'+name+'</b><p>' + message +'</p><span class="time-right">' + n + '</span></div>'
-    if (name == 'undefined'){
-      name=load_name();
-      content = '<div class="container darker">' + '<b style="color:#000" class="left">'+name+'</b><p>' + msg.message +'</p><span class="time-left">' + n + '</span></div>'
-    }
+//name:load_name(),message:msg})
+/*
+document.querySelector('#sendBtn').onsubmit= (e)=>{
+    console.log('clicked')
+    e.preventDefault();
+    msg=document.querySelector('#msg').value;
+    add_message(message=msg);
+
+async function load_name(){
+    const request = new XMLHttpRequest();
+     request.open('GET', '/get_name',true);
+     request.onload = async () => {
+     const data = JSON.parse(request.responseText);
+            if(request.status===200){
+            console.log(data.name)
+            return data.name
+            }
+            else{
+            console.log('couldn\'nt get the data from the server')}
+            return 'couldn\'nt get the data from the server'
+            }
+            await request.send()
+             }
+*/
+function dateNow() {
+  var date = new Date();
+  var year = date.getFullYear();
+  var day = date.getDate();
+  var month = (date.getMonth() + 1);
+/*
+  if (day < 10)
+      day = "0" + day;
+
+  if (month < 10)
+      month = "0" + month;
+*/
+  var cur_day = day + "-" + month + "-" + year;
+
+  var hours = date.getHours()
+  var minutes = date.getMinutes()
+  var seconds = date.getSeconds();
+
+  if (hours < 10)
+      hours = "0" + hours;
+
+  if (minutes < 10)
+      minutes = "0" + minutes;
+
+  if (seconds < 10)
+      seconds = "0" + seconds;
+
+  return cur_day + " " + hours + ":" + minutes;
+}
+
+
+async function add_messageonleft(name,message){
+    time=dateNow()
+    if (message!==''){
+      var  content = '<div class="container darker">' + '<b style="color:#000" class="left">'+name+'</b><p>' + message +'</p><span class="time-left">' + time + '</span></div>';
+       var messageDiv = document.querySelector('#messages');
+    messageDiv.innerHTML += content;
+    document.querySelector('#msg').value=''
+
+  document.querySelector('#messsages').srollTo()
+
+ }}
+
+async function add_messageonright(name,message){
+ time=dateNow()
+     if (message!==''){
+
+     var content = '<div class="container">' + '<b style="color:#000" class="right">'+name+'</b><p>' + message +'</p><span class="time-right">' + time + '</span></div>';
+
     // update div
     var messageDiv = document.querySelector('#messages');
     messageDiv.innerHTML += content;
-  }
-
-  if (scroll){
-    scrollSmoothToBottom('messages');
-  }}
-
-function scrollSmoothToBottom (id) {
-   var div = document.getElementById(id);
-   $('#' + id).animate({
-      scrollTop: div.scrollHeight - div.clientHeight
-   }, 500);
+    document.querySelector('#msg').value=''
+    document.querySelector('#messsages').scrollTop=document.querySelector('#messages').offsetTop;
 
 }
+ }
 
-function scrollSmoothToBottom (id) {
-   var div = document.getElementById(id);
-   $('#' + id).animate({
-      scrollTop: div.scrollHeight - div.clientHeight
-   }, 500);
-}
+
     })

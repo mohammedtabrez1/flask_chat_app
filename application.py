@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,url_for,session,jsonify
+from flask import Flask,render_template,request,redirect,url_for,session,jsonify,flash,after_this_request,make_response
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO
 from mongodb import save_user,get_user#,get_messages,get_room,get_room_members,is_room_member
@@ -18,7 +18,9 @@ login_manager = LoginManager()
 login_manager.login_view='login'
 login_manager.init_app(app)
 
+msgs = []
 
+NAME_KEY='name'
 @app.route("/", methods=['POST','GET'])
 def signup():
     message = ''
@@ -54,6 +56,8 @@ def login():
         if username and password:
             if user and user.check_password(password):
                 login_user(user)
+                session[NAME_KEY] = username
+                flash(f'You were successfully logged in as {username}.')
                 return redirect(url_for('chat_room'))
             elif not user:
                 message= f'{username} is not registered, please signup'
@@ -79,8 +83,10 @@ def login():
 
 @app.route("/chat_room",methods=['GET','POST'])
 def chat_room():
-
-    return render_template('chat_room.html')
+    if current_user.is_authenticated:
+        return render_template('chat_room.html')
+    else:
+         return redirect(url_for('login'))
 
 
 @app.route("/logout")
@@ -90,20 +96,36 @@ def logout():
 
 @socketio.on('send_message')
 def broadcast_message(data):
+    global msgs
     name = data['name']
     msg = data['msg']
+    msgs.append(msg)
     #save the message to db here
+    app.logger.info(data)
+    app.logger.info(f'name : {name} and msg : {msg}')
 
-    socketio.emit('receive',jsonify(data))
+    socketio.emit('receive',{'name':name,'msg':msg},broadcast=True, include_self=False)
 
-@app.route("/get_name")
+@app.route("/get_messages",methods=['GET','POST'])
+def get_messages():
+    return {'msgs':msgs}
+
+
+@app.route("/get_name",methods=['GET','POST'])
 def get_name():
     """
     :return: a json object storing name of logged in user
     """
-    user=current_user
-    print(user)
-    return jsonify({'user':user})
+
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    data = {"name": ""}
+    if 'name' in session:
+        data = {"name": session['name']}
+    app.logger.info(f'data:{data}')
+    return jsonify(data)
 '''
 @app.route('/rooms/<room_id>/')
 @login_required
@@ -124,5 +146,5 @@ def load_user(username):
 
 
 if __name__=="__main__":
-    socketio.run(app, debug=Config.FLASK_DEBUG)
+    socketio.run(app, debug=Config.FLASK_DEBUG, host='0.0.0.0',port='5000')
 
