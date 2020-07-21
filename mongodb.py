@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 from werkzeug.security import generate_password_hash
-from bson import ObjectId
 from user import User
 import datetime
 
@@ -11,10 +10,20 @@ users_collection= chat_db.get_collection("Users")
 messages_collection= chat_db.get_collection("Messages")
 
 def save_user(username,email,password):
+    """
+    :param username: takes the username from the signup page
+    :param email: takes the email from signup page
+    :param password: takes the password from signup page and converts into the hashed password
+    :return: saves the data into the user collection
+    """
     hashed_password=generate_password_hash(password)
     users_collection.insert_one({'_id':username,'email': email,'password':hashed_password,'created_on':datetime.datetime.now()})
 
 def get_user(username):
+    """
+    :param username: takes the username from the get_user method
+    :return: fetches the data from user table and returns the user object
+    """
     data=users_collection.find_one({'_id':username})
     return User(data['_id'],data['email'],data['password']) if data else None
 
@@ -36,6 +45,3 @@ def get_all_messages():
         return_list.append({'username':message['username'],'message':message['message']})
     return return_list[::-1]
 
-
-
-#print({'data':(get_all_messages())})

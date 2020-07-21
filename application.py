@@ -24,6 +24,9 @@ NAME_KEY='name'
 @app.route("/signup")
 @app.route("/", methods=['POST','GET'])
 def signup():
+    """
+    :return: return the signup page and handles all the authentication scenarios
+    """
     message = ''
     if request.method=='POST':
         username = request.form.get('username')
@@ -47,6 +50,9 @@ def signup():
 
 @app.route("/login", methods=['POST','GET'])
 def login():
+    """
+    :return: returns login page and handles authentication scenarios
+    """
     if current_user.is_authenticated:
         return redirect(url_for('chat_room'))
     message = ''
@@ -84,6 +90,9 @@ def login():
 
 @app.route("/chat_room",methods=['GET','POST'])
 def chat_room():
+    """
+    :return: returns chat_room page if the user is authhenticated
+    """
     if current_user.is_authenticated:
         return render_template('chat_room.html')
     else:
