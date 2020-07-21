@@ -1,7 +1,7 @@
-from flask import Flask,render_template,request,redirect,url_for,session,jsonify,flash,after_this_request,make_response
+from flask import Flask,render_template,request,redirect,url_for,session,jsonify,flash,after_this_request
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from flask_socketio import SocketIO
-from mongodb import save_user,get_user#,get_messages,get_room,get_room_members,is_room_member
+from mongodb import save_user,get_user,save_message,get_all_messages
 from pymongo.errors import DuplicateKeyError
 from werkzeug.exceptions import BadRequestKeyError
 import json
@@ -21,6 +21,7 @@ login_manager.init_app(app)
 msgs = []
 
 NAME_KEY='name'
+@app.route("/signup")
 @app.route("/", methods=['POST','GET'])
 def signup():
     message = ''
@@ -91,24 +92,35 @@ def chat_room():
 
 @app.route("/logout")
 def logout():
+    """
+    Logs the user out from the session
+    :return: None
+    """
+    session.pop(NAME_KEY,None)
     logout_user()
     return render_template('logout.html')
 
 @socketio.on('send_message')
 def broadcast_message(data):
-    global msgs
+    """
+    :param data: reveives name and the message from the user
+    :return: broadcast the message to all the other users except self
+    """
     name = data['name']
     msg = data['msg']
-    msgs.append(msg)
-    #save the message to db here
-    app.logger.info(data)
-    app.logger.info(f'name : {name} and msg : {msg}')
+    save_message(name,msg)
+    print(f'get_messgae:  {get_all_messages()}')
+    app.logger.info(f'name : {name}  -  msg : {msg}')
 
     socketio.emit('receive',{'name':name,'msg':msg},broadcast=True, include_self=False)
 
 @app.route("/get_messages",methods=['GET','POST'])
 def get_messages():
-    return {'msgs':msgs}
+    """
+    :return: a json object with the list of data from mongodb
+    """
+    return jsonify({'data':(get_all_messages())})
+
 
 
 @app.route("/get_name",methods=['GET','POST'])
@@ -126,19 +138,8 @@ def get_name():
         data = {"name": session['name']}
     app.logger.info(f'data:{data}')
     return jsonify(data)
-'''
-@app.route('/rooms/<room_id>/')
-@login_required
-def view_room(room_id):
-    room = get_room(room_id)
-    if room and is_room_member(room_id, current_user.username):
-        room_members = get_room_members(room_id)
-        messages = get_messages(room_id)
-        return render_template('view_room.html', username=current_user.username, room=room, room_members=room_members,
-                               messages=messages)
-    else:
-        return "Room not found", 404
-'''
+
+
 @login_manager.user_loader
 def load_user(username):
     return get_user(username)
