@@ -1,8 +1,8 @@
-  {% extends "index.html" %}
+{% extends "index.html" %}
 
-   {% block headcontent %}
-   Sign Up
-  {% endblock headcontent %}
+{% block headcontent %}
+Sign Up
+{% endblock headcontent %}
 {%block heading%}
 <div class="row" style="padding-top:10px;">
 	<div class="col">
@@ -29,22 +29,25 @@
 
 
 <form method="post" action="/">
-  <div class="form-group">
-    <label for="username">User Name</label>
-	<input type="text" style=width:25% class="form-control" id="username" name="username" aria-describedby="usernamehelp" placeholder="Enter username">
-  </div>
-  <div class="form-group">
-    <label for="email">Email address</label>
-    <input type="email" width=50% class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email" style=width:25%>
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" width=50% class="form-control" id="password" name="password" placeholder="Password" style=width:25%>
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
+	<div class="form-group">
+		<label for="username">User Name</label>
+		<input type="text" style=width:25% class="form-control" id="username" name="username"
+			aria-describedby="usernamehelp" placeholder="Enter username">
+	</div>
+	<div class="form-group">
+		<label for="email">Email address</label>
+		<input type="email" width=50% class="form-control" id="email" name="email" aria-describedby="emailHelp"
+			placeholder="Enter email" style=width:25%>
+	</div>
+	<div class="form-group">
+		<label for="password">Password</label>
+		<input type="password" width=50% class="form-control" id="password" name="password" placeholder="Password"
+			style=width:25%>
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 <div class="color-auto text-monospace text-justify text-danger">
 	<h2>{{message}}</h2>
 </div>
-  {% endblock bodycontent %}
+{% endblock bodycontent %}

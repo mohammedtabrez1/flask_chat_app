@@ -1,15 +1,15 @@
-from flask import Flask,render_template,request,redirect,url_for,session,jsonify,flash,after_this_request
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+import json
+
+from flask import (Flask, after_this_request, flash, jsonify, redirect,
+                   render_template, request, session, url_for)
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
 from flask_socketio import SocketIO
-from mongodb import save_user,get_user,save_message,get_all_messages
 from pymongo.errors import DuplicateKeyError
 from werkzeug.exceptions import BadRequestKeyError
-import json
+
 from config import Config
-
-
-
-
+from mongodb import get_all_messages, get_user, save_message, save_user
 
 app = Flask(__name__)
 app.secret_key=Config.SECRET_KEY
@@ -118,9 +118,6 @@ def broadcast_message(data):
     name = data['name']
     msg = data['msg']
     save_message(name,msg)
-    print(f'get_messgae:  {get_all_messages()}')
-    app.logger.info(f'name : {name}  -  msg : {msg}')
-
     socketio.emit('receive',{'name':name,'msg':msg},broadcast=True, include_self=False)
 
 @app.route("/get_messages",methods=['GET','POST'])
@@ -137,15 +134,9 @@ def get_name():
     """
     :return: a json object storing name of logged in user
     """
-
-    @after_this_request
-    def add_header(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response
     data = {"name": ""}
     if 'name' in session:
         data = {"name": session['name']}
-    app.logger.info(f'data:{data}')
     return jsonify(data)
 
 
@@ -156,5 +147,4 @@ def load_user(username):
 
 
 if __name__=="__main__":
-    socketio.run(app, debug=Config.FLASK_DEBUG, host='0.0.0.0',port='5000')
-
+    socketio.run(app, debug=Config.FLASK_DEBUG, host=config.SERVER)

@@ -1,75 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <style type="text/css">
-            /* Chat containers */
-            .container {
-              border: 2px solid #dedede;
-              background-color: #f1f1f1;
-              border-radius: 5px;
-              padding: 10px;
-              margin: 10px 0;
-              position:center;
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <style type="text/css">
+    /* Chat containers */
+    .container {
+      border: 2px solid #dedede;
+      background-color: #f1f1f1;
+      border-radius: 5px;
+      padding: 10px;
+      margin: 10px 0;
+      position: center;
 
-            }
+    }
 
-            /* Darker chat container */
-            .darker {
-              border-color: #ccc;
-              background-color: #ddd;
-            }
+    /* Darker chat container */
+    .darker {
+      border-color: #ccc;
+      background-color: #ddd;
+    }
 
-            /* Clear floats */
-            .container::after {
-              content: "";
-              clear: both;
-              display: table;
-            }
+    /* Clear floats */
+    .container::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
 
-            /* Style images */
-            .container b {
-              float: left;
-              max-width: 60px;
-              width: 100%;
-              margin-right: 20px;
-              border-radius: 50%;
-            }
+    /* Style images */
+    .container b {
+      float: left;
+      max-width: 60px;
+      width: 100%;
+      margin-right: 20px;
+      border-radius: 50%;
+    }
 
-            /* Style the right image */
-            .container b.right {
-              float: right;
-              margin-left: 20px;
-              margin-right:0;
-            }
+    /* Style the right image */
+    .container b.right {
+      float: right;
+      margin-left: 20px;
+      margin-right: 0;
+    }
 
-            /* Style time text */
-            .time-right {
-              float: right;
-              color: #aaa;
-            }
+    /* Style time text */
+    .time-right {
+      float: right;
+      color: #aaa;
+    }
 
-            /* Style time text */
-            .time-left {
-              float: left;
-              color: #999;
-            }
-
-        </style>
-    <title>
-        {% block headcontent %}
-        {% endblock headcontent %}
-    </title>
+    /* Style time text */
+    .time-left {
+      float: left;
+      color: #999;
+    }
+  </style>
+  <title>
+    {% block headcontent %}
+    {% endblock headcontent %}
+  </title>
 </head>
+
 <body>
-<h1 style="margin:auto;text-align:center;padding:20px"> <b>{%block heading%}{%endblock heading%}</b> </h1>
-        {% block bodycontent %}
-        {% endblock bodycontent %}
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-<script src="{{url_for('static', filename='javascript.js')}}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"> </script>
+  <h1 style="margin:auto;text-align:center;padding:20px"> <b>{%block heading%}{%endblock heading%}</b> </h1>
+  {% block bodycontent %}
+  {% endblock bodycontent %}
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="{{url_for('static', filename='javascript.js')}}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"> </script>
 </body>
+
 </html>
