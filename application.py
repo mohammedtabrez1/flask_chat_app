@@ -147,4 +147,4 @@ def load_user(username):
 
 
 if __name__=="__main__":
-    socketio.run(app, debug=Config.FLASK_DEBUG, host=config.SERVER)
+    socketio.run(app, debug=Config.FLASK_DEBUG)
